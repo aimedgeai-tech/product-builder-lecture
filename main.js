@@ -2,17 +2,17 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.m
 
 const FOOD_DATA = [
     { name: "비빔밥", category: "korean", tip: "각종 나물과 고추장의 조화! 건강한 한 끼를 원하신다면 추천합니다.", img: "https://images.unsplash.com/photo-1590301157890-4810ed352733?q=80&w=600&auto=format&fit=crop" },
-    { name: "삼겹살", category: "korean", tip: "오늘 하루 수고한 당신에게 주는 보상! 지글지글 고기 파티 어때요?", img: "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebd?q=80&w=600&auto=format&fit=crop" },
-    { name: "김치찌개", category: "korean", tip: "얼큰하고 칼칼한 국물이 생각날 때! 밥 한 그릇 뚝딱입니다.", img: "https://images.unsplash.com/photo-1583213334190-7815b81a044d?q=80&w=600&auto=format&fit=crop" },
+    { name: "삼겹살", category: "korean", tip: "오늘 하루 수고한 당신에게 주는 보상! 지글지글 고기 파티 어때요?", img: "https://images.unsplash.com/photo-1592663527359-cf6642f54cff?q=80&w=600&auto=format&fit=crop" },
+    { name: "김치찌개", category: "korean", tip: "얼큰하고 칼칼한 국물이 생각날 때! 밥 한 그릇 뚝딱입니다.", img: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=600&auto=format&fit=crop" },
     { name: "짜장면", category: "chinese", tip: "남녀노소 누구나 좋아하는 국민 외식! 오늘 저녁은 중식 어때요?", img: "https://images.unsplash.com/photo-1617093727343-374698b1b08d?q=80&w=600&auto=format&fit=crop" },
-    { name: "마라탕", category: "chinese", tip: "스트레스 풀리는 매콤함! 좋아하는 재료 가득 담아 드셔보세요.", img: "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?q=80&w=600&auto=format&fit=crop" },
-    { name: "초밥", category: "japanese", tip: "깔끔하고 신선한 저녁을 원하신다면! 다양한 맛을 즐겨보세요.", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=600&auto=format&fit=crop" },
-    { name: "라멘", category: "japanese", tip: "진한 국물과 쫄깃한 면발의 조화! 뜨끈한 국물이 일품입니다.", img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=600&auto=format&fit=crop" },
-    { name: "돈카츠", category: "japanese", tip: "겉바속촉의 정석! 바삭한 튀김 옷 안의 육즙을 느껴보세요.", img: "https://images.unsplash.com/photo-1548946522-4a313e8972a4?q=80&w=600&auto=format&fit=crop" },
+    { name: "마라탕", category: "chinese", tip: "스트레스 풀리는 매콤함! 좋아하는 재료 가득 담아 드셔보세요.", img: "https://images.unsplash.com/photo-1623341214825-9f4f963727da?q=80&w=600&auto=format&fit=crop" },
+    { name: "초밥", category: "japanese", tip: "깔끔하고 신선한 저녁을 원하신다면! 다양한 맛을 즐겨보세요.", img: "https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=600&auto=format&fit=crop" },
+    { name: "라멘", category: "japanese", tip: "진한 국물과 쫄깃한 면발의 조화! 뜨끈한 국물이 일품입니다.", img: "https://images.unsplash.com/photo-1557872245-741f4c666d13?q=80&w=600&auto=format&fit=crop" },
+    { name: "돈카츠", category: "japanese", tip: "겉바속촉의 정석! 바삭한 튀김 옷 안의 육즙을 느껴보세요.", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=600&auto=format&fit=crop" },
     { name: "피자", category: "western", tip: "친구들과 함께 즐기기 좋은 메뉴! 고소한 치즈가 듬뿍!", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop" },
     { name: "파스타", category: "western", tip: "분위기 있는 저녁을 원하신다면! 다양한 소스의 파스타를 추천합니다.", img: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?q=80&w=600&auto=format&fit=crop" },
     { name: "스테이크", category: "western", tip: "근사한 저녁 식사! 육즙 가득한 스테이크로 단백질 충전!", img: "https://images.unsplash.com/photo-1546241072-48010ad28c2c?q=80&w=600&auto=format&fit=crop" },
-    { name: "치킨", category: "special", tip: "오늘 저녁은 치맥 어때요? 바삭한 튀김과 시원한 맥주 한 잔!", img: "https://images.unsplash.com/photo-1562967914-608f82629710?q=80&w=600&auto=format&fit=crop" },
+    { name: "치킨", category: "special", tip: "오늘 저녁은 치맥 어때요? 바삭한 튀김과 시원한 맥주 한 잔!", img: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?q=80&w=600&auto=format&fit=crop" },
     { name: "햄버거", category: "special", tip: "간편하게 즐기는 든든한 한 끼! 프렌치 프라이도 잊지 마세요.", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop" },
     { name: "쌀국수", category: "special", tip: "속 편한 저녁을 원하신다면! 시원한 국물의 쌀국수를 추천합니다.", img: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?q=80&w=600&auto=format&fit=crop" }
 ];
