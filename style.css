@@ -23,7 +23,10 @@
 body {
     margin: 0;
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-    background-color: var(--bg-color);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://img.freepik.com/premium-photo/cute-baby-panda-character-3d-render-illustration_1020697-1569.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
     display: flex;
@@ -37,10 +40,21 @@ main {
     max-width: 600px;
     width: 100%;
     background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     padding: 2.5rem;
-    border-radius: 24px;
+    border-radius: 30px;
     box-shadow: var(--shadow);
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="light"] main {
+    background: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] main {
+    background: rgba(45, 45, 45, 0.85);
 }
 
 h1 {
