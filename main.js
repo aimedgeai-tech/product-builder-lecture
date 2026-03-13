@@ -1,270 +1,220 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
 
-class PandaScene {
+const FOOD_DATA = [
+    { name: "비빔밥", category: "korean", tip: "각종 나물과 고추장의 조화! 건강한 한 끼를 원하신다면 추천합니다.", img: "https://images.unsplash.com/photo-1590301157890-4810ed352733?q=80&w=600&auto=format&fit=crop" },
+    { name: "삼겹살", category: "korean", tip: "오늘 하루 수고한 당신에게 주는 보상! 지글지글 고기 파티 어때요?", img: "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebd?q=80&w=600&auto=format&fit=crop" },
+    { name: "김치찌개", category: "korean", tip: "얼큰하고 칼칼한 국물이 생각날 때! 밥 한 그릇 뚝딱입니다.", img: "https://images.unsplash.com/photo-1583213334190-7815b81a044d?q=80&w=600&auto=format&fit=crop" },
+    { name: "짜장면", category: "chinese", tip: "남녀노소 누구나 좋아하는 국민 외식! 오늘 저녁은 중식 어때요?", img: "https://images.unsplash.com/photo-1617093727343-374698b1b08d?q=80&w=600&auto=format&fit=crop" },
+    { name: "마라탕", category: "chinese", tip: "스트레스 풀리는 매콤함! 좋아하는 재료 가득 담아 드셔보세요.", img: "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?q=80&w=600&auto=format&fit=crop" },
+    { name: "초밥", category: "japanese", tip: "깔끔하고 신선한 저녁을 원하신다면! 다양한 맛을 즐겨보세요.", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=600&auto=format&fit=crop" },
+    { name: "라멘", category: "japanese", tip: "진한 국물과 쫄깃한 면발의 조화! 뜨끈한 국물이 일품입니다.", img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=600&auto=format&fit=crop" },
+    { name: "돈카츠", category: "japanese", tip: "겉바속촉의 정석! 바삭한 튀김 옷 안의 육즙을 느껴보세요.", img: "https://images.unsplash.com/photo-1548946522-4a313e8972a4?q=80&w=600&auto=format&fit=crop" },
+    { name: "피자", category: "western", tip: "친구들과 함께 즐기기 좋은 메뉴! 고소한 치즈가 듬뿍!", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=600&auto=format&fit=crop" },
+    { name: "파스타", category: "western", tip: "분위기 있는 저녁을 원하신다면! 다양한 소스의 파스타를 추천합니다.", img: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?q=80&w=600&auto=format&fit=crop" },
+    { name: "스테이크", category: "western", tip: "근사한 저녁 식사! 육즙 가득한 스테이크로 단백질 충전!", img: "https://images.unsplash.com/photo-1546241072-48010ad28c2c?q=80&w=600&auto=format&fit=crop" },
+    { name: "치킨", category: "special", tip: "오늘 저녁은 치맥 어때요? 바삭한 튀김과 시원한 맥주 한 잔!", img: "https://images.unsplash.com/photo-1562967914-608f82629710?q=80&w=600&auto=format&fit=crop" },
+    { name: "햄버거", category: "special", tip: "간편하게 즐기는 든든한 한 끼! 프렌치 프라이도 잊지 마세요.", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop" },
+    { name: "쌀국수", category: "special", tip: "속 편한 저녁을 원하신다면! 시원한 국물의 쌀국수를 추천합니다.", img: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?q=80&w=600&auto=format&fit=crop" }
+];
+
+const CHEF_QUOTES = [
+    "음... 이 메뉴는 어떠신가요?",
+    "오늘따라 이 음식이 정말 맛있어 보이네요!",
+    "후회 없는 선택이 될 거예요!",
+    "판다 셰프 강력 추천 메뉴입니다!",
+    "재료가 신선할 때 꼭 드셔보세요!"
+];
+
+class PandaChef {
     constructor(containerId) {
         try {
             this.container = document.getElementById(containerId);
             if (!this.container) return;
-
             this.scene = new THREE.Scene();
             this.camera = new THREE.PerspectiveCamera(45, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
             this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
             this.container.appendChild(this.renderer.domElement);
-
-            this.camera.position.z = 5;
+            this.camera.position.z = 4.5;
             this.camera.position.y = 0.2;
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
             this.scene.add(ambientLight);
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
             dirLight.position.set(5, 10, 7);
             this.scene.add(dirLight);
-
             this.createPanda();
-
-            this.animate = this.animate.bind(this);
-            this.isDrawing = false;
+            this.isAnimating = false;
             this.animate();
-            
             window.addEventListener('resize', () => {
                 if (!this.container || this.container.clientWidth === 0) return;
                 this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
                 this.camera.updateProjectionMatrix();
                 this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
             });
-        } catch (e) {
-            console.error("Three.js Init Error:", e);
-        }
+        } catch (e) { console.error(e); }
     }
 
     createPanda() {
         this.pandaGroup = new THREE.Group();
         const whiteMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
         const blackMat = new THREE.MeshLambertMaterial({ color: 0x222222 });
+        const hatMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
 
-        const headGeo = new THREE.SphereGeometry(1, 32, 32);
-        this.head = new THREE.Mesh(headGeo, whiteMat);
-        this.pandaGroup.add(this.head);
+        // Head & Body
+        const head = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), whiteMat);
+        const body = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), whiteMat);
+        body.position.set(0, -1.6, 0);
+        this.pandaGroup.add(head);
+        this.pandaGroup.add(body);
 
-        const earGeo = new THREE.SphereGeometry(0.35, 16, 16);
-        const leftEar = new THREE.Mesh(earGeo, blackMat);
-        leftEar.position.set(-0.75, 0.75, 0);
-        this.head.add(leftEar);
-        const rightEar = new THREE.Mesh(earGeo, blackMat);
-        rightEar.position.set(0.75, 0.75, 0);
-        this.head.add(rightEar);
+        // Chef Hat
+        const hatBase = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.4), hatMat);
+        hatBase.position.set(0, 1.1, 0);
+        head.add(hatBase);
+        const hatTop = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), hatMat);
+        hatTop.position.set(0, 1.4, 0);
+        head.add(hatTop);
 
-        const patchGeo = new THREE.SphereGeometry(0.28, 16, 16);
-        const leftPatch = new THREE.Mesh(patchGeo, blackMat);
-        leftPatch.position.set(-0.35, 0.1, 0.85);
-        this.head.add(leftPatch);
-        const rightPatch = new THREE.Mesh(patchGeo, blackMat);
-        rightPatch.position.set(0.35, 0.1, 0.85);
-        this.head.add(rightPatch);
+        // Ears, Patches, Eyes (simplified for performance)
+        [-0.75, 0.75].forEach(x => {
+            const ear = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), blackMat);
+            ear.position.set(x, 0.75, 0);
+            head.add(ear);
+            const patch = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 16), blackMat);
+            patch.position.set(x * 0.45, 0.1, 0.85);
+            head.add(patch);
+        });
 
-        const eyeGeo = new THREE.SphereGeometry(0.08, 16, 16);
-        const leftEye = new THREE.Mesh(eyeGeo, whiteMat);
-        leftEye.position.set(-0.05, 0.05, 0.25);
-        leftPatch.add(leftEye);
-        const rightEye = new THREE.Mesh(eyeGeo, whiteMat);
-        rightEye.position.set(0.05, 0.05, 0.25);
-        rightPatch.add(rightEye);
-
-        const bodyGeo = new THREE.SphereGeometry(1.1, 32, 32);
-        this.body = new THREE.Mesh(bodyGeo, whiteMat);
-        this.body.position.set(0, -1.6, 0);
-        this.pandaGroup.add(this.body);
-
-        const armGeo = new THREE.CylinderGeometry(0.25, 0.2, 1.2);
-        this.leftArm = new THREE.Mesh(armGeo, blackMat);
-        this.leftArm.position.set(-1.1, -1.2, 0.5);
-        this.leftArm.rotation.z = Math.PI / 4;
-        this.pandaGroup.add(this.leftArm);
-        this.rightArm = new THREE.Mesh(armGeo, blackMat);
-        this.rightArm.position.set(1.1, -1.2, 0.5);
-        this.rightArm.rotation.z = -Math.PI / 4;
-        this.pandaGroup.add(this.rightArm);
+        const nose = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), blackMat);
+        nose.position.set(0, -0.2, 0.98);
+        head.add(nose);
 
         this.scene.add(this.pandaGroup);
-        this.pandaGroup.position.y = 0.5;
+        this.pandaGroup.position.y = 0.3;
+        this.head = head;
     }
 
     animate() {
-        requestAnimationFrame(this.animate);
+        requestAnimationFrame(() => this.animate());
         const time = Date.now();
-        if (!this.isDrawing) {
-            this.pandaGroup.rotation.y = Math.sin(time * 0.001) * 0.15;
-            this.head.rotation.y = Math.sin(time * 0.0015) * 0.1;
+        if (!this.isAnimating) {
+            this.pandaGroup.rotation.y = Math.sin(time * 0.001) * 0.1;
+            this.head.rotation.x = Math.sin(time * 0.0015) * 0.05;
         } else {
-            this.pandaGroup.rotation.y = Math.sin(time * 0.015) * 0.3;
-            this.pandaGroup.position.y = 0.5 + Math.abs(Math.sin(time * 0.01)) * 0.4;
+            this.pandaGroup.rotation.y = Math.sin(time * 0.02) * 0.5;
+            this.pandaGroup.position.y = 0.3 + Math.abs(Math.sin(time * 0.01)) * 0.5;
         }
         this.renderer.render(this.scene, this.camera);
     }
 
-    drawLotto(callback) {
-        if (!this.renderer) { if(callback) callback(); return; }
-        this.isDrawing = true;
+    startCooking(callback) {
+        this.isAnimating = true;
         setTimeout(() => {
-            this.isDrawing = false;
-            this.pandaGroup.position.y = 0.5;
+            this.isAnimating = false;
+            this.pandaGroup.position.y = 0.3;
             this.pandaGroup.rotation.y = 0;
             if (callback) callback();
         }, 1500);
     }
 }
 
-let pandaApp = null;
-
-class LottoDisplay extends HTMLElement {
+class FoodDisplay extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
         this.render();
-        this.displayNumbers(this.generateLottoNumbers(), true);
     }
 
     render() {
         this.shadowRoot.innerHTML = `
             <style>
-                .lotto-numbers {
+                :host { width: 100%; display: block; }
+                .food-card {
                     display: flex;
-                    gap: 0.8rem;
+                    flex-direction: column;
                     align-items: center;
-                    justify-content: center;
-                    padding: 20px;
-                    min-height: 60px;
-                    flex-wrap: wrap;
+                    animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
                 }
-                .number-ball {
-                    width: 42px;
-                    height: 42px;
+                @keyframes slideUp {
+                    from { opacity: 0; transform: translateY(30px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .food-image {
+                    width: 220px;
+                    height: 220px;
                     border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 1rem;
-                    font-weight: bold;
-                    color: white;
-                    background: linear-gradient(135deg, #6e8efb, #a777e3);
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                    opacity: 0;
-                    transform: scale(0.5);
-                    animation: popIn 0.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    object-fit: cover;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                    border: 6px solid #ff9f43;
+                    margin-bottom: 1.5rem;
                 }
-                .bonus-ball { background: linear-gradient(135deg, #f093fb, #f5576c); }
-                .plus-icon { font-size: 1.2rem; color: #888; font-weight: bold; opacity: 0; animation: fadeIn 0.5s forwards; }
-                @keyframes popIn { to { opacity: 1; transform: scale(1); } }
-                @keyframes fadeIn { to { opacity: 1; } }
-                .loading-text { font-size: 1.1rem; color: #666; font-weight: bold; animation: pulse 1s infinite alternate; }
-                @keyframes pulse { from { opacity: 0.6; } to { opacity: 1; } }
+                .food-name {
+                    font-size: 2rem;
+                    font-weight: 800;
+                    margin: 0.5rem 0;
+                    color: #ee5253;
+                }
+                .food-tip {
+                    font-size: 1rem;
+                    opacity: 0.9;
+                    max-width: 90%;
+                    line-height: 1.6;
+                    color: #4a3b30;
+                }
+                .placeholder { font-size: 1.2rem; color: #888; font-style: italic; }
             </style>
-            <div class="lotto-numbers"></div>
+            <div id="container">
+                <div class="placeholder">셰프 판다에게 추천을 요청해보세요! 🐼🍚</div>
+            </div>
         `;
-        this.numbersContainer = this.shadowRoot.querySelector('.lotto-numbers');
+        this.container = this.shadowRoot.getElementById('container');
     }
 
-    async generateAndDisplayNumbers(saveToDB = true) {
-        const numbers = this.generateLottoNumbers();
-        if (pandaApp && pandaApp.renderer) {
-            this.numbersContainer.innerHTML = '<span class="loading-text">판다가 번호를 뽑고 있어요... 🐼✨</span>';
-            pandaApp.drawLotto(async () => {
-                this.displayNumbers(numbers, false);
-                if (saveToDB) await this.saveToDB(numbers);
-            });
-        } else {
-            this.displayNumbers(numbers, false);
-            if (saveToDB) await this.saveToDB(numbers);
-        }
-    }
-
-    generateLottoNumbers() {
-        const numbers = new Set();
-        while (numbers.size < 6) numbers.add(Math.floor(Math.random() * 45) + 1);
-        const mainNumbers = Array.from(numbers).sort((a, b) => a - b);
-        let bonusNumber;
-        do { bonusNumber = Math.floor(Math.random() * 45) + 1; } while (mainNumbers.includes(bonusNumber));
-        return { mainNumbers, bonusNumber, timestamp: new Date() };
-    }
-
-    displayNumbers({ mainNumbers, bonusNumber }, immediate = false) {
-        this.numbersContainer.innerHTML = ''; 
-        mainNumbers.forEach((num, index) => {
-            const ball = document.createElement('div');
-            ball.className = 'number-ball';
-            ball.textContent = num;
-            if (immediate) { ball.style.animation = 'none'; ball.style.opacity = '1'; ball.style.transform = 'scale(1)'; }
-            else { ball.style.animationDelay = \`\${index * 0.1}s\`; }
-            this.numbersContainer.appendChild(ball);
-        });
-        const plus = document.createElement('div');
-        plus.className = 'plus-icon';
-        plus.textContent = '+';
-        if (immediate) plus.style.opacity = '1'; else plus.style.animationDelay = '0.6s';
-        this.numbersContainer.appendChild(plus);
-        const bonus = document.createElement('div');
-        bonus.className = 'number-ball bonus-ball';
-        bonus.textContent = bonusNumber;
-        if (immediate) { bonus.style.animation = 'none'; bonus.style.opacity = '1'; bonus.style.transform = 'scale(1)'; }
-        else { bonus.style.animationDelay = '0.7s'; }
-        this.numbersContainer.appendChild(bonus);
-    }
-
-    async saveToDB(data) {
-        if (!window.firebaseDB) return;
-        try {
-            const { db, collection, addDoc } = window.firebaseDB;
-            await addDoc(collection(db, "lotto_history"), data);
-        } catch (e) { console.error("Save Error:", e); }
+    update(food) {
+        this.container.innerHTML = `
+            <div class="food-card">
+                <img src="${food.img}" alt="${food.name}" class="food-image">
+                <div class="food-name">${food.name}</div>
+                <div class="food-tip">${food.tip}</div>
+            </div>
+        `;
     }
 }
 
-customElements.define('lotto-display', LottoDisplay);
+customElements.define('food-display', FoodDisplay);
+
+// Logic initialization
+let chef = null;
+let currentCategory = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
-    try {
-        pandaApp = new PandaScene('panda-canvas');
-    } catch(e) { console.error(e); }
+    chef = new PandaChef('panda-canvas');
+    
+    const display = document.querySelector('food-display');
+    const quoteEl = document.getElementById('chef-quote');
+    const recommendBtn = document.getElementById('recommend-btn');
+    const categoryBtns = document.querySelectorAll('.category-btn');
 
-    const genBtn = document.getElementById('generate-btn');
-    if (genBtn) {
-        genBtn.addEventListener('click', () => {
-            const display = document.querySelector('lotto-display');
-            if (display) display.generateAndDisplayNumbers(true);
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCategory = btn.dataset.category;
         });
-    }
+    });
 
-    const checkDB = setInterval(() => {
-        if (window.firebaseDB) {
-            initHistory();
-            clearInterval(checkDB);
-        }
-    }, 1000);
+    recommendBtn.addEventListener('click', () => {
+        if (chef.isAnimating) return;
+        
+        quoteEl.textContent = "...요리하는 중... 🐼🔥";
+        chef.startCooking(() => {
+            const filtered = currentCategory === 'all' 
+                ? FOOD_DATA 
+                : FOOD_DATA.filter(f => f.category === currentCategory);
+            
+            const randomFood = filtered[Math.floor(Math.random() * filtered.length)];
+            display.update(randomFood);
+            quoteEl.textContent = `"${CHEF_QUOTES[Math.floor(Math.random() * CHEF_QUOTES.length)]}"`;
+        });
+    });
 });
-
-function initHistory() {
-    try {
-        const { db, collection, query, orderBy, limit, onSnapshot } = window.firebaseDB;
-        const q = query(collection(db, "lotto_history"), orderBy("timestamp", "desc"), limit(5));
-        onSnapshot(q, (snap) => {
-            const list = document.getElementById('history-list');
-            if (!list) return;
-            list.innerHTML = '';
-            snap.forEach(doc => {
-                const d = doc.data();
-                const li = document.createElement('li');
-                li.className = 'history-item';
-                li.innerHTML = \`
-                    <span class="history-date">\${d.timestamp?.toDate().toLocaleString() || ''}</span>
-                    <div class="history-balls">
-                        \${d.mainNumbers.map(n => \`<span class="small-ball">\${n}</span>\`).join('')}
-                        <span class="small-plus">+</span>
-                        <span class="small-ball bonus">\${d.bonusNumber}</span>
-                    </div>
-                \`;
-                list.appendChild(li);
-            });
-        });
-    } catch(e) { console.error("History Init Error:", e); }
-}

@@ -1,71 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotto Number Recommender</title>
+    <title>오늘 저녁 뭐먹지? - 셰프 판다의 추천</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+    <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환">
         🌓
     </button>
-    <h1>Lotto Number Recommender</h1>
+    
     <main>
-        <section class="generator-section">
-            <div id="panda-canvas" style="width: 100%; height: 250px; border-radius: 15px; overflow: hidden; margin-bottom: 20px; background: transparent;"></div>
-            <lotto-display></lotto-display>
-            <button id="generate-btn">추천 번호 생성하기</button>
-        </section>
+        <div id="panda-canvas"></div>
+        <div class="chef-quote" id="chef-quote">"오늘 저녁 메뉴가 고민이신가요? 제가 도와드릴게요!"</div>
         
-        <hr>
+        <h1>오늘 저녁 뭐먹지?</h1>
         
-        <section class="history-section">
-            <h2>최근 생성된 번호</h2>
-            <ul id="history-list">
-                <!-- Firestore에서 불러온 데이터가 여기에 표시됩니다. -->
-            </ul>
-        </section>
+        <div class="category-filter" id="category-filter">
+            <button class="category-btn active" data-category="all">전체</button>
+            <button class="category-btn" data-category="korean">한식</button>
+            <button class="category-btn" data-category="chinese">중식</button>
+            <button class="category-btn" data-category="japanese">일식</button>
+            <button class="category-btn" data-category="western">양식</button>
+            <button class="category-btn" data-category="special">기타/간식</button>
+        </div>
+
+        <div class="food-display-container">
+            <food-display></food-display>
+        </div>
+
+        <button id="recommend-btn">메뉴 추천받기 🎲</button>
     </main>
 
     <script>
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         
-        // Load saved theme
         const savedTheme = localStorage.getItem('theme') || 'light';
         body.setAttribute('data-theme', savedTheme);
         
         themeToggle.addEventListener('click', () => {
             const currentTheme = body.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
             body.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         });
-    </script>
-
-    <!-- Firebase SDK (v10+) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Firebase 설정 (사용자님의 실제 설정으로 교체해주세요)
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Firebase 초기화
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // 전역 객체에 Firestore 기능 노출 (main.js에서 접근 가능하도록)
-        window.firebaseDB = { db, collection, addDoc, query, orderBy, limit, onSnapshot };
     </script>
     <script src="main.js" type="module"></script>
 </body>
